@@ -1,0 +1,48 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    background-color: rgb(255, 255, 255);
+}
+
+.form-container {
+    background-color: rgb(237, 222, 222);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-item {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+    gap: 20px;
+}
+
+.form-input {
+    width: 250px;
+    border-radius: 7px;
+    text-align: center;
+}
+
+.error-msg {
+    color: red;
+}
+
+.invalid-form-input {
+    border-color: red;
+}
+
+.valid-form-input {
+    border-color: green;
+}

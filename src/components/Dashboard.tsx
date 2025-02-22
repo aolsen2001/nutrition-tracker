@@ -1,13 +1,13 @@
 // import { useState } from "react";
-import { Meal } from "../types";
+import { Meal } from '../types';
 
 function MealList(meals: Meal[]) {
   const mealListItems = meals.map((meal: Meal) => (
     <li key={meal.id}>
       <p>
         {meal.name} - {meal.calories} - {meal.protein} - {meal.servings} -
-        {meal.date.toLocaleString().split(",")[0]} -
-        {meal.date.toLocaleString().split(",")[1]}
+        {meal.date.toLocaleString().split(',')[0]} -
+        {meal.date.toLocaleString().split(',')[1]}
       </p>
     </li>
   ));
@@ -19,7 +19,7 @@ function Dashboard() {
   const meals: Meal[] = [
     {
       id: 1,
-      name: "Chicken Breast",
+      name: 'Chicken Breast',
       calories: 300,
       protein: 30,
       servings: 1,
@@ -27,7 +27,7 @@ function Dashboard() {
     },
     {
       id: 2,
-      name: "Greek Yogurt",
+      name: 'Greek Yogurt',
       calories: 200,
       protein: 15,
       servings: 2,
@@ -35,7 +35,7 @@ function Dashboard() {
     },
     {
       id: 3,
-      name: "Cheeseburger",
+      name: 'Cheeseburger',
       calories: 500,
       protein: 22,
       servings: 1,
@@ -43,7 +43,7 @@ function Dashboard() {
     },
     {
       id: 4,
-      name: "Mixed Nuts",
+      name: 'Mixed Nuts',
       calories: 200,
       protein: 12,
       servings: 3,
@@ -51,7 +51,7 @@ function Dashboard() {
     },
     {
       id: 5,
-      name: "Protein Shake",
+      name: 'Protein Shake',
       calories: 400,
       protein: 40,
       servings: 1,

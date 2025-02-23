@@ -14,6 +14,7 @@ function SignUp() {
   const [validPassword, setValidPassword] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState(new Map<string, string[]>());
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -75,16 +76,6 @@ function SignUp() {
 
     setPassword(newPassword);
 
-    console.log(newErrors.get('password')?.length);
-
-    const arr = newErrors.get('password');
-
-    if (arr !== undefined) {
-      for (let i = 0; i < arr.length; ++i) {
-        console.log(arr[i]);
-      }
-    }
-
     if (newErrors.get('password')?.length === 0) {
       setValidPassword(true);
     } else {
@@ -98,14 +89,18 @@ function SignUp() {
     setShowPassword(!showPassword);
   };
 
+  const handleFocus = (input: string) => {
+    setFocusedInput(input);
+  };
+
+  const handleBlur = () => {
+    setFocusedInput(null);
+  };
+
   const handleSignUpSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('In Form Submit');
 
     if (!validEmail || !validPassword) {
-      console.log(
-        `Returned due to invalid email (${validEmail}) or invalid password (${validPassword})`
-      );
       return;
     }
 
@@ -125,7 +120,7 @@ function SignUp() {
   return (
     <>
       <div className='form-container'>
-        <h1> Sign Up </h1>
+        <h1 className='form-header'> Sign Up </h1>
         <form noValidate onSubmit={handleSignUpSubmit}>
           <div className='form-item'>
             <label htmlFor='email-address'>Email Address:</label>
@@ -137,44 +132,65 @@ function SignUp() {
               })}
               type='email'
               value={email}
+              onFocus={() => handleFocus('email')}
+              onBlur={handleBlur}
               onChange={handleEmailChange}
               id='email-address'
               name='email-address'
               placeholder='name@example.com'
             ></input>
-            {(errors.get('email') ?? []).length > 0 && (
-              <ul>
-                <li className='error-msg'>{(errors.get('email') ?? [])[0]}</li>
-              </ul>
-            )}
+            {focusedInput === 'email' &&
+              (errors.get('email') ?? []).length > 0 && (
+                <ul className='error-list'>
+                  <li className='error-msg'>
+                    {(errors.get('email') ?? [])[0]}
+                  </li>
+                </ul>
+              )}
           </div>
-          <label htmlFor='password'>Password: </label>
-          <input
-            className={clsx({
-              '': password === '',
-              'invalid-form-input': password !== '' && !validPassword,
-              'valid-form-input': password !== '' && validPassword,
-            })}
-            type={showPassword ? 'text' : 'password'}
-            value={password}
-            onChange={handlePasswordChange}
-            id='password'
-            name='password'
-            placeholder='Password'
-          ></input>
-          <button type='button' onClick={togglePasswordVisibility}>
-            {showPassword ? 'Hide Password' : 'Show Password'}
+          <div className='form-item'>
+            <div className='password-item'>
+              <label htmlFor='password'>Password: </label>
+              <button type='button' onClick={togglePasswordVisibility}>
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            <input
+              className={clsx({
+                'form-input': password === '',
+                'form-input invalid-form-input':
+                  password !== '' && !validPassword,
+                'form-input valid-form-input': password !== '' && validPassword,
+              })}
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onFocus={() => handleFocus('password')}
+              onBlur={handleBlur}
+              onChange={handlePasswordChange}
+              id='password'
+              name='password'
+              placeholder='Password'
+            ></input>
+            {focusedInput === 'password' &&
+              (errors.get('password') ?? []).length > 0 && (
+                <ul className='error-list'>
+                  {(errors.get('password') ?? []).map((errorMsg, index) => (
+                    <li className='error-msg' key={index}>
+                      {errorMsg}
+                    </li>
+                  ))}
+                </ul>
+              )}
+          </div>
+          <button
+            className='form-button'
+            type='submit'
+            disabled={
+              email === '' || password === '' || !validEmail || !validPassword
+            }
+          >
+            Create Account
           </button>
-          {(errors.get('password') ?? []).length > 0 && (
-            <ul>
-              {(errors.get('password') ?? []).map((errorMsg, index) => (
-                <li className='error-msg' key={index}>
-                  {errorMsg}
-                </li>
-              ))}
-            </ul>
-          )}
-          <button type='submit'>Create Account</button>
         </form>
       </div>
     </>

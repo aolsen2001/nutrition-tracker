@@ -1,4 +1,9 @@
 :root {
+    
+}
+
+html, body {
+    margin: 0;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
@@ -75,4 +80,19 @@ form {
 .dashboard-container {
     background-color: white;
     display: flex;
+    flex-direction: column;
+}
+
+.dashboard-header {
+    background-color: blue;
+    color: white;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.link-container {
+    display: flex;
+    gap: 50px;
+    justify-content: space-between;
 }

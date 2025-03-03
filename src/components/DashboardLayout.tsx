@@ -1,12 +1,13 @@
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut, User } from 'firebase/auth';
 import { useNavigate } from 'react-router';
 import '../styles.css';
 
-interface DashboardChildren {
+interface DashboardLayoutProps {
+  user: User | null;
   children: React.ReactNode;
 }
 
-function DashboardLayout({ children }: DashboardChildren) {
+function DashboardLayout({ user, children }: DashboardLayoutProps) {
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -22,12 +23,16 @@ function DashboardLayout({ children }: DashboardChildren) {
 
   return (
     <div className='dashboard-container'>
-      <div className='dashboard-header'>
+      <div className='dashboard-sidebar'>
         <div className='link-container'>
-          <div>Overview</div>
-          <div>Meal History</div>
-          <div>Log Meal</div>
-          <div onClick={handleSignOut}>Sign Out</div>
+          <h1>NutriLite</h1>
+          <div>Currently Signed in As: {user?.email}</div>
+          <div className='nav-item'>Overview</div>
+          <div className='nav-item'>Meal History</div>
+          <div className='nav-item'>Log Meal</div>
+          <div className='nav-item' onClick={handleSignOut}>
+            Sign Out
+          </div>
         </div>
       </div>
       <div className='content'> {children} </div>

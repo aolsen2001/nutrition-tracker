@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Meal } from '../types';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { useNavigate } from 'react-router';
 import DashboardLayout from './DashboardLayout';
 import '../styles.css';
 
@@ -52,11 +53,16 @@ function MealTable({ meals, onDelete }: MealTableProps) {
 
 function Dashboard() {
   const auth = getAuth();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<User | null>(null);
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log('Current user: ', user.email);
+      setUser(user);
     } else {
-      console.log('No user currently signed in.');
+      setUser(null);
+      navigate('/login');
     }
   });
 
@@ -119,6 +125,27 @@ function Dashboard() {
   ];
 
   const [userMeals, setUserMeals] = useState<Meal[]>(meals);
+  const [totalCalories, setTotalCalories] = useState<number>(0);
+  const [totalProtein, setTotalProtein] = useState<number>(0);
+  const [totalFat, setTotalFat] = useState<number>(0);
+  const [totalCarbs, setTotalCarbs] = useState<number>(0);
+
+  useEffect(() => {
+    const newTotals = userMeals.reduce(
+      (acc, meal) => {
+        acc.calories += meal.calories * meal.servings;
+        acc.protein += meal.protein * meal.servings;
+        acc.fat += meal.fat * meal.servings;
+        acc.carbs += meal.carbs * meal.servings;
+        return acc;
+      },
+      { calories: 0, protein: 0, fat: 0, carbs: 0 }
+    );
+    setTotalCalories(newTotals.calories);
+    setTotalProtein(newTotals.protein);
+    setTotalFat(newTotals.fat);
+    setTotalCarbs(newTotals.carbs);
+  }, [userMeals]);
 
   const [mealFormData, setMealFormData] = useState<
     Omit<Meal, 'id' | 'user_id' | 'date'>
@@ -138,7 +165,6 @@ function Dashboard() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'date') console.log(new Date(value + 'T00:00:00'));
     setMealFormData((prev) => ({
       ...prev,
       [name]: Number(value) || value,
@@ -173,7 +199,7 @@ function Dashboard() {
   }, [userMeals]);
 
   return (
-    <DashboardLayout>
+    <DashboardLayout user={user}>
       <form onSubmit={addNewMeal}>
         <label htmlFor='name'>Name</label>
         <input
@@ -230,8 +256,17 @@ function Dashboard() {
         ></input>
         <button type='submit'>Add Meal</button>
       </form>
-      <h1>Meal Table</h1>
-      <MealTable meals={userMeals} onDelete={deleteMeal} />
+      {userMeals?.length > 0 ? (
+        <MealTable meals={userMeals} onDelete={deleteMeal} />
+      ) : (
+        <div>No Meals Logged for Today ({new Date().toLocaleDateString()})</div>
+      )}
+      <div>
+        <div>Total Calories: {totalCalories}</div>
+        <div>Total Protein: {totalProtein}</div>
+        <div>Total Fat: {totalFat}</div>
+        <div>Total Carbs: {totalCarbs}</div>
+      </div>
     </DashboardLayout>
   );
 }

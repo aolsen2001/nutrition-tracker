@@ -1,6 +1,6 @@
 export type Meal = {
   id: number;
-  user_id: number;
+  user_id: string;
   name: string;
   calories: number;
   protein: number;

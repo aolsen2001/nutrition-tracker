@@ -63,7 +63,7 @@ function Dashboard() {
   const meals: Meal[] = [
     {
       id: 1,
-      user_id: 1,
+      user_id: '1',
       name: 'Chicken Breast',
       calories: 300,
       protein: 30,
@@ -74,7 +74,7 @@ function Dashboard() {
     },
     {
       id: 2,
-      user_id: 1,
+      user_id: '2',
       name: 'Greek Yogurt',
       calories: 200,
       protein: 15,
@@ -85,7 +85,7 @@ function Dashboard() {
     },
     {
       id: 3,
-      user_id: 1,
+      user_id: '3',
       name: 'Cheeseburger',
       calories: 500,
       protein: 22,
@@ -96,7 +96,7 @@ function Dashboard() {
     },
     {
       id: 4,
-      user_id: 2,
+      user_id: '4',
       name: 'Mixed Nuts',
       calories: 200,
       protein: 12,
@@ -107,7 +107,7 @@ function Dashboard() {
     },
     {
       id: 5,
-      user_id: 2,
+      user_id: '5',
       name: 'Protein Shake',
       calories: 400,
       protein: 40,
@@ -120,9 +120,51 @@ function Dashboard() {
 
   const [userMeals, setUserMeals] = useState<Meal[]>(meals);
 
+  const [mealFormData, setMealFormData] = useState<
+    Omit<Meal, 'id' | 'user_id' | 'date'>
+  >({
+    name: '',
+    calories: 0,
+    protein: 0,
+    fat: 0,
+    carbs: 0,
+    servings: 1,
+  });
+
   const deleteMeal = (id: number) => {
     const filteredUserMeals = userMeals.filter((m) => m.id !== id);
     setUserMeals(filteredUserMeals);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === 'date') console.log(new Date(value + 'T00:00:00'));
+    setMealFormData((prev) => ({
+      ...prev,
+      [name]: Number(value) || value,
+    }));
+  };
+
+  const addNewMeal = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const newMeal: Meal = {
+      id: userMeals.length + 1,
+      user_id: auth.currentUser?.uid ?? '',
+      date: new Date(),
+      ...mealFormData,
+    };
+
+    setUserMeals([...userMeals, newMeal]);
+
+    setMealFormData({
+      name: '',
+      calories: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      servings: 1,
+    });
   };
 
   // for debugging purposes
@@ -132,6 +174,62 @@ function Dashboard() {
 
   return (
     <DashboardLayout>
+      <form onSubmit={addNewMeal}>
+        <label htmlFor='name'>Name</label>
+        <input
+          type='text'
+          name='name'
+          value={mealFormData.name}
+          onChange={handleInputChange}
+          placeholder='Meal Name'
+        ></input>
+        <label htmlFor='calories'>Calories</label>
+        <input
+          type='text'
+          pattern='(?:0|[1-9]\d*)'
+          name='calories'
+          value={mealFormData.calories}
+          onChange={handleInputChange}
+          placeholder='Calories'
+        ></input>
+        <label htmlFor='protein'>Protein (g)</label>
+        <input
+          type='text'
+          pattern='(?:0|[1-9]\d*)'
+          name='protein'
+          value={mealFormData.protein}
+          onChange={handleInputChange}
+          placeholder='Protein (g)'
+        ></input>
+        <label htmlFor='fat'>Fat (g)</label>
+        <input
+          type='text'
+          pattern='(?:0|[1-9]\d*)'
+          name='fat'
+          value={mealFormData.fat}
+          onChange={handleInputChange}
+          placeholder='Fat (g)'
+        ></input>
+        <label htmlFor='carbs'>Carbs (g)</label>
+        <input
+          type='text'
+          pattern='(?:0|[1-9]\d*)'
+          name='carbs'
+          value={mealFormData.carbs}
+          onChange={handleInputChange}
+          placeholder='Carbs (g)'
+        ></input>
+        <label htmlFor='servings'>Servings</label>
+        <input
+          type='text'
+          pattern='(?:0|[1-9]\d*)'
+          name='servings'
+          value={mealFormData.servings}
+          onChange={handleInputChange}
+          placeholder='Servings'
+        ></input>
+        <button type='submit'>Add Meal</button>
+      </form>
       <h1>Meal Table</h1>
       <MealTable meals={userMeals} onDelete={deleteMeal} />
     </DashboardLayout>

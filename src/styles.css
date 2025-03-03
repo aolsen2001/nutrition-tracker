@@ -1,7 +1,8 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    background-color: #6CCFF6;
 }
+
+/* form styling */
 
 .form-container {
     box-sizing: border-box;
@@ -16,7 +17,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background: #bbe4e9;
 }
 
 form {
@@ -67,4 +68,11 @@ form {
 
 .valid-form-input {
     border-color: green;
+}
+
+/* dashboard styling */
+
+.dashboard-container {
+    background-color: white;
+    display: flex;
 }

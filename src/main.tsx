@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router';
 import SignUp from './SignUp.tsx';
 import Login from './Login.tsx';
 import Dashboard from './components/Dashboard.tsx';
-// import './index.css';
 import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(

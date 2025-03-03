@@ -4,7 +4,6 @@ import Dashboard from './components/Dashboard';
 function App() {
   return (
     <>
-      <div>Meals</div>
       <Dashboard />
     </>
   );

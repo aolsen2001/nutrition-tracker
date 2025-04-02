@@ -7,8 +7,8 @@ import SignUp from './SignUp.tsx';
 import Login from './Login.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import DashboardLayout from './components/DashboardLayout.tsx';
+import Landing from './components/Landing.tsx';
 import LogMeal from './components/LogMeal.tsx';
-import App from './App.tsx';
 
 function Main() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,7 +24,7 @@ function Main() {
     <StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<App />} />
+          <Route path='/' element={<Landing />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
           <Route path='/dashboard' element={<DashboardLayout user={user} />}>

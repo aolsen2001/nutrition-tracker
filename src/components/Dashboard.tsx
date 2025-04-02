@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Meal } from '../types';
+import { Outlet, useNavigate } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { useNavigate } from 'react-router';
-import DashboardLayout from './DashboardLayout';
 import '../styles.css';
 
 interface MealTableProps {
@@ -52,24 +51,27 @@ function MealTable({ meals, onDelete }: MealTableProps) {
 }
 
 function Dashboard() {
-  const auth = getAuth();
-  const navigate = useNavigate();
-
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+  const auth = getAuth();
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUser(user);
-    } else {
-      setUser(null);
-      navigate('/login');
-    }
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+        navigate('/login');
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, navigate]);
 
   const meals: Meal[] = [
     {
       id: 1,
       user_id: '1',
+      fatsecret_id: null,
       name: 'Chicken Breast',
       calories: 300,
       protein: 30,
@@ -81,6 +83,7 @@ function Dashboard() {
     {
       id: 2,
       user_id: '2',
+      fatsecret_id: null,
       name: 'Greek Yogurt',
       calories: 200,
       protein: 15,
@@ -92,6 +95,7 @@ function Dashboard() {
     {
       id: 3,
       user_id: '3',
+      fatsecret_id: null,
       name: 'Cheeseburger',
       calories: 500,
       protein: 22,
@@ -103,6 +107,7 @@ function Dashboard() {
     {
       id: 4,
       user_id: '4',
+      fatsecret_id: null,
       name: 'Mixed Nuts',
       calories: 200,
       protein: 12,
@@ -114,6 +119,7 @@ function Dashboard() {
     {
       id: 5,
       user_id: '5',
+      fatsecret_id: null,
       name: 'Protein Shake',
       calories: 400,
       protein: 40,
@@ -151,6 +157,7 @@ function Dashboard() {
     Omit<Meal, 'id' | 'user_id' | 'date'>
   >({
     name: '',
+    fatsecret_id: null,
     calories: 0,
     protein: 0,
     fat: 0,
@@ -176,7 +183,7 @@ function Dashboard() {
 
     const newMeal: Meal = {
       id: userMeals.length + 1,
-      user_id: auth.currentUser?.uid ?? '',
+      user_id: user?.uid ?? '',
       date: new Date(),
       ...mealFormData,
     };
@@ -185,6 +192,7 @@ function Dashboard() {
 
     setMealFormData({
       name: '',
+      fatsecret_id: null,
       calories: 0,
       protein: 0,
       fat: 0,
@@ -199,7 +207,7 @@ function Dashboard() {
   }, [userMeals]);
 
   return (
-    <DashboardLayout user={user}>
+    <>
       <form onSubmit={addNewMeal}>
         <label htmlFor='name'>Name</label>
         <input
@@ -267,7 +275,8 @@ function Dashboard() {
         <div>Total Fat: {totalFat}</div>
         <div>Total Carbs: {totalCarbs}</div>
       </div>
-    </DashboardLayout>
+      <Outlet />
+    </>
   );
 }
 

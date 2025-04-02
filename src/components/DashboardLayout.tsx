@@ -1,14 +1,13 @@
-import { getAuth, signOut, User } from 'firebase/auth';
-import { useNavigate } from 'react-router';
+import { auth } from '../firebase.tsx';
+import { signOut, User } from 'firebase/auth';
+import { Outlet, useNavigate } from 'react-router';
 import '../styles.css';
 
 interface DashboardLayoutProps {
   user: User | null;
-  children: React.ReactNode;
 }
 
-function DashboardLayout({ user, children }: DashboardLayoutProps) {
-  const auth = getAuth();
+function DashboardLayout({ user }: DashboardLayoutProps) {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
@@ -27,15 +26,25 @@ function DashboardLayout({ user, children }: DashboardLayoutProps) {
         <div className='link-container'>
           <h1>NutriLite</h1>
           <div>Currently Signed in As: {user?.email}</div>
-          <div className='nav-item'>Overview</div>
+          <div className='nav-item' onClick={() => navigate('/dashboard')}>
+            Overview
+          </div>
           <div className='nav-item'>Meal History</div>
-          <div className='nav-item'>Log Meal</div>
+          <div
+            className='nav-item'
+            onClick={() => navigate('/dashboard/logmeal')}
+          >
+            Log Meal
+          </div>
           <div className='nav-item' onClick={handleSignOut}>
             Sign Out
           </div>
         </div>
       </div>
-      <div className='content'> {children} </div>
+      <div className='content'>
+        {' '}
+        <Outlet />{' '}
+      </div>
     </div>
   );
 }

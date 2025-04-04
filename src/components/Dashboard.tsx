@@ -71,7 +71,7 @@ function Dashboard() {
     {
       id: 1,
       user_id: '1',
-      fatsecret_id: null,
+      api_id: null,
       name: 'Chicken Breast',
       calories: 300,
       protein: 30,
@@ -83,7 +83,7 @@ function Dashboard() {
     {
       id: 2,
       user_id: '2',
-      fatsecret_id: null,
+      api_id: null,
       name: 'Greek Yogurt',
       calories: 200,
       protein: 15,
@@ -95,7 +95,7 @@ function Dashboard() {
     {
       id: 3,
       user_id: '3',
-      fatsecret_id: null,
+      api_id: null,
       name: 'Cheeseburger',
       calories: 500,
       protein: 22,
@@ -107,7 +107,7 @@ function Dashboard() {
     {
       id: 4,
       user_id: '4',
-      fatsecret_id: null,
+      api_id: null,
       name: 'Mixed Nuts',
       calories: 200,
       protein: 12,
@@ -119,7 +119,7 @@ function Dashboard() {
     {
       id: 5,
       user_id: '5',
-      fatsecret_id: null,
+      api_id: null,
       name: 'Protein Shake',
       calories: 400,
       protein: 40,
@@ -157,7 +157,7 @@ function Dashboard() {
     Omit<Meal, 'id' | 'user_id' | 'date'>
   >({
     name: '',
-    fatsecret_id: null,
+    api_id: null,
     calories: 0,
     protein: 0,
     fat: 0,
@@ -192,7 +192,7 @@ function Dashboard() {
 
     setMealFormData({
       name: '',
-      fatsecret_id: null,
+      api_id: null,
       calories: 0,
       protein: 0,
       fat: 0,

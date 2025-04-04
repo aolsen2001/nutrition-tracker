@@ -1,6 +1,6 @@
-export type Meal = {
+export interface Meal {
   id: number;
-  fatsecret_id: number | null;
+  api_id: number | null; // unique identifer for food pulled from FatSecret API calls
   user_id: string;
   name: string;
   calories: number;
@@ -9,4 +9,20 @@ export type Meal = {
   carbs: number;
   servings: number;
   date: Date;
-};
+}
+
+interface ApiMealServing {
+  calories: string;
+  carbohydrate: string;
+  protein: string;
+  fat: string;
+}
+
+// for food results from FatSecret API calls
+export interface ApiMeal {
+  food_id: number;
+  food_name: string;
+  servings: {
+    serving: ApiMealServing[];
+  };
+}

@@ -25,7 +25,7 @@ public class FatSecretService
 
         var values = new Dictionary<string, string>
         {
-            { "scope", "basic" },
+            { "scope", "premier" },
             { "grant_type", "client_credentials" }
         };
 
@@ -43,7 +43,7 @@ public class FatSecretService
     {
         var token = await GetAccessTokenAsync();
 
-        var url = $"https://platform.fatsecret.com/rest/server.api?method=foods.search&search_expression={Uri.EscapeDataString(query)}";
+        var url = $"https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression={Uri.EscapeDataString(query)}&format=json";
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
         requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);

@@ -16,7 +16,6 @@ function Landing() {
         setLoading(false);
       }
     });
-
     return () => unsubscribe();
   }, [navigate]);
 

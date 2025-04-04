@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router';
 import { auth } from './firebase.tsx';
 import { onAuthStateChanged, User } from 'firebase/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import SignUp from './SignUp.tsx';
 import Login from './Login.tsx';
 import Dashboard from './components/Dashboard.tsx';
@@ -20,6 +21,8 @@ function Main() {
     return () => unsubscribe();
   }, []);
 
+  const queryClient = new QueryClient();
+
   return (
     <StrictMode>
       <BrowserRouter>
@@ -29,7 +32,14 @@ function Main() {
           <Route path='/login' element={<Login />} />
           <Route path='/dashboard' element={<DashboardLayout user={user} />}>
             <Route index element={<Dashboard />} />
-            <Route path='/dashboard/logmeal' element={<LogMeal />} />
+            <Route
+              path='/dashboard/logmeal'
+              element={
+                <QueryClientProvider client={queryClient}>
+                  <LogMeal />
+                </QueryClientProvider>
+              }
+            />
           </Route>
         </Routes>
       </BrowserRouter>

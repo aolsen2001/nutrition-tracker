@@ -8,17 +8,18 @@ Env.Load("../.env");
 var clientId = Environment.GetEnvironmentVariable("CLIENT_ID");
 var clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET");
 
-if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-{
-    Console.WriteLine("Client ID or Client Secret is not set correctly.");
-}
-else
-{
-    Console.WriteLine($"Client ID: {clientId}");
-    Console.WriteLine($"Client Secret: {clientSecret}");
-}
-
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 builder.Services.AddHttpClient<FatSecretService>();
 
@@ -34,6 +35,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseCors("AllowLocalhost");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

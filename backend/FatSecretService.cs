@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+// using Newtonsoft.Json;
+using System.Text.Json;
+using backend.Models;
 
 public class FatSecretService
 {
@@ -34,12 +36,12 @@ public class FatSecretService
 
         var responseString = await response.Content.ReadAsStringAsync();
 
-        var responseObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+        var responseObject = JsonSerializer.Deserialize<ApiTokenResponse>(responseString);
 
-        return responseObject["access_token"];
+        return responseObject.access_token;
     }
 
-    public async Task<IEnumerable<string>> SearchFoodAsync(string query)
+    public async Task<ApiFoodSearchResponse> SearchFoodAsync(string query)
     {
         var token = await GetAccessTokenAsync();
 
@@ -56,6 +58,33 @@ public class FatSecretService
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return new List<string> { responseContent };
+        Console.WriteLine(responseContent);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var searchResult = JsonSerializer.Deserialize<ApiFoodSearchResponse>(responseContent, options);
+
+        // if (searchResult?.foods_search?.results?.food != null)
+        // {
+        //     foreach (var food in searchResult.foods_search.results.food)
+        //     {
+        //         Console.WriteLine($"Food Name: {food.food_name}");
+
+        //         if (food.servings?.serving != null && food.servings.serving.Count > 0)
+        //         {
+        //             var serving = food.servings.serving[0];  // Assuming the first serving is the one you need
+        //             Console.WriteLine($"Calories: {serving.calories}");
+        //             Console.WriteLine($"Carbohydrates: {serving.carbohydrate}");
+        //             Console.WriteLine($"Protein: {serving.protein}");
+        //             Console.WriteLine($"Fat: {serving.fat}");
+        //         }
+        //     }
+        // }
+
+
+        return searchResult;
     }
 }

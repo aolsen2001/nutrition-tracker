@@ -11,18 +11,31 @@ export interface Meal {
   date: Date;
 }
 
-interface ApiMealServing {
+// for results from the API calls
+export interface ApiFoodSearchResponse {
+  foods_search: FoodsSearch;
+}
+
+export interface FoodsSearch {
+  max_results: string;
+  total_results: string;
+  page_number: string;
+  results: Food[];
+}
+
+export interface Food {
+  food_id: string | null;
+  food_name: string | null;
+  servings: Servings;
+}
+
+export interface Servings {
+  serving: Serving[];
+}
+
+export interface Serving {
   calories: string;
   carbohydrate: string;
   protein: string;
   fat: string;
-}
-
-// for food results from FatSecret API calls
-export interface ApiMeal {
-  food_id: number;
-  food_name: string;
-  servings: {
-    serving: ApiMealServing[];
-  };
 }

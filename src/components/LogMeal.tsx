@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Meal, ApiMeal } from '../types';
+import { Food } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { Outlet, useNavigate } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
@@ -10,8 +10,8 @@ const apiUrl = import.meta.env.VITE_BACKEND_URL;
 const fetchMealsFromQuery = async (query: string) => {
   const res = await fetch(`${apiUrl}/food/search?query=${query}`);
   if (!res.ok) throw new Error('Failed to fetch foods');
-  console.log(res);
-  return res.json();
+  const data = await res.json();
+  return data;
 };
 
 function LogMeal() {
@@ -41,10 +41,6 @@ function LogMeal() {
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (data) console.log(typeof data[0]);
-  }, [data]);
-
   function handleSearch() {
     setSubmittedQuery(query);
   }
@@ -54,6 +50,10 @@ function LogMeal() {
       handleSearch();
     }
   }
+
+  useEffect(() => {
+    if (data) console.log(data.foods_search.results.food);
+  }, [data]);
 
   return (
     <>
@@ -71,11 +71,19 @@ function LogMeal() {
         )}
       </div>
       <ul>
-        {data?.length > 0
-          ? data?.map((meal: ApiMeal) => <li></li>)
+        {data?.foods_search.results.food.length > 0
+          ? data.foods_search.results.food.map((meal: Food) => (
+              <li key={meal.food_id}>
+                <h3>{meal.food_name}</h3>
+                <p>Calories: {meal.servings.serving[0].calories}</p>
+                <p>Carbohydrates: {meal.servings.serving[0].carbohydrate}g</p>
+                <p>Protein: {meal.servings.serving[0].protein}g</p>
+                <p>Fat: {meal.servings.serving[0].fat}g</p>
+              </li>
+            ))
           : !isLoading &&
             submittedQuery.length > 0 && (
-              <p>No meals found for search term {query}.</p>
+              <p>No meals found for search term "{query}".</p>
             )}
       </ul>
       <Outlet />

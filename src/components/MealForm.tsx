@@ -41,9 +41,16 @@ function MealForm({
     }));
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onFormSubmit(e as React.FormEvent<HTMLFormElement>);
+    }
+  }
+
   return (
     <>
-      <form onSubmit={onFormSubmit}>
+      <form onSubmit={onFormSubmit} onKeyDown={handleKeyDown}>
         <label htmlFor='name'>Name</label>
         <input
           type='text'
@@ -55,7 +62,7 @@ function MealForm({
         <label htmlFor='calories'>Calories</label>
         <input
           type='text'
-          pattern='(?:0|[1-9]\d*)'
+          pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='calories'
           value={mealFormData.calories}
           onChange={handleInputChange}
@@ -64,7 +71,7 @@ function MealForm({
         <label htmlFor='protein'>Protein (g)</label>
         <input
           type='text'
-          pattern='(?:0|[1-9]\d*)'
+          pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='protein'
           value={mealFormData.protein}
           onChange={handleInputChange}
@@ -73,7 +80,7 @@ function MealForm({
         <label htmlFor='fat'>Fat (g)</label>
         <input
           type='text'
-          pattern='(?:0|[1-9]\d*)'
+          pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='fat'
           value={mealFormData.fat}
           onChange={handleInputChange}
@@ -82,7 +89,7 @@ function MealForm({
         <label htmlFor='carbs'>Carbs (g)</label>
         <input
           type='text'
-          pattern='(?:0|[1-9]\d*)'
+          pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='carbs'
           value={mealFormData.carbs}
           onChange={handleInputChange}
@@ -91,7 +98,7 @@ function MealForm({
         <label htmlFor='servings'>Servings</label>
         <input
           type='text'
-          pattern='(?:0|[1-9]\d*)'
+          pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='servings'
           value={mealFormData.servings}
           onChange={handleInputChange}

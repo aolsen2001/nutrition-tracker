@@ -24,9 +24,21 @@ function ModalFormContainer({
     }
   }, [isOpen]);
 
+  // prevents dialog from closing when the user hits enter, allowing them to submit the form instead
+  function onKeyDown(e: React.KeyboardEvent<HTMLDialogElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  }
+
   return (
     <>
-      <dialog ref={dialogRef}>{children}</dialog>
+      <dialog ref={dialogRef} onClose={onClose} onKeyDown={onKeyDown}>
+        <button type='button' onClick={onClose}>
+          Close
+        </button>
+        {children}
+      </dialog>
     </>
   );
 }

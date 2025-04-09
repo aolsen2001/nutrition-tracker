@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Food } from '../types';
 import { useQuery } from '@tanstack/react-query';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useNavigate, useSearchParams } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
 import MealCard from './MealCard';
 import ModalFormContainer from './ModalFormContainer';
@@ -36,9 +36,17 @@ function LogMeal() {
     return () => unsubscribe();
   }, [auth, navigate]);
 
-  const [query, setQuery] = useState('');
-  const [submittedQuery, setSubmittedQuery] = useState('');
-  const [pageNumber, setPageNumber] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryParam = searchParams.get('query');
+  const pageNumberParam = searchParams.get('pageNumber');
+
+  const [query, setQuery] = useState(queryParam ? queryParam : '');
+  const [submittedQuery, setSubmittedQuery] = useState(
+    queryParam ? queryParam : ''
+  );
+  const [pageNumber, setPageNumber] = useState(
+    pageNumberParam ? Number(pageNumberParam) : 0
+  );
   const [formIsOpen, setFormIsOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Food | null>(null);
   const [totalResults, setTotalResults] = useState(0);
@@ -53,6 +61,7 @@ function LogMeal() {
   function handleSearch() {
     setSubmittedQuery(query);
     setPageNumber(0);
+    setSearchParams({ query: query, pageNumber: String(0) });
   }
 
   function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -74,15 +83,30 @@ function LogMeal() {
 
   function handlePrevClick() {
     if (pageNumber > 0) {
-      setPageNumber(pageNumber - 1);
+      const prevPageNumber = pageNumber - 1;
+      setPageNumber(prevPageNumber);
+      setSearchParams({
+        query: submittedQuery,
+        pageNumber: String(prevPageNumber),
+      });
     }
   }
 
   function handleNextClick() {
     // max results per page is 20
     if (pageNumber < Math.ceil(totalResults / 20) - 1) {
-      setPageNumber(pageNumber + 1);
+      const nextPageNumber = pageNumber + 1;
+      setPageNumber(nextPageNumber);
+      setSearchParams({
+        query: submittedQuery,
+        pageNumber: String(nextPageNumber),
+      });
     }
+  }
+
+  function handleDialogClose() {
+    console.log('Closed dialog.');
+    setFormIsOpen(false);
   }
 
   useEffect(() => {
@@ -139,7 +163,7 @@ function LogMeal() {
       {formIsOpen && selectedMeal && (
         <ModalFormContainer
           isOpen={formIsOpen}
-          onClose={() => setFormIsOpen(false)}
+          onClose={handleDialogClose}
           children={
             <MealForm
               name={selectedMeal.food_name}

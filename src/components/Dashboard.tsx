@@ -201,62 +201,6 @@ function Dashboard() {
 
   return (
     <>
-      <form onSubmit={addNewMeal}>
-        <label htmlFor='name'>Name</label>
-        <input
-          type='text'
-          name='name'
-          value={mealFormData.name}
-          onChange={handleInputChange}
-          placeholder='Meal Name'
-        ></input>
-        <label htmlFor='calories'>Calories</label>
-        <input
-          type='text'
-          pattern='(?:0|[1-9]\d*)'
-          name='calories'
-          value={mealFormData.calories}
-          onChange={handleInputChange}
-          placeholder='Calories'
-        ></input>
-        <label htmlFor='protein'>Protein (g)</label>
-        <input
-          type='text'
-          pattern='(?:0|[1-9]\d*)'
-          name='protein'
-          value={mealFormData.protein}
-          onChange={handleInputChange}
-          placeholder='Protein (g)'
-        ></input>
-        <label htmlFor='fat'>Fat (g)</label>
-        <input
-          type='text'
-          pattern='(?:0|[1-9]\d*)'
-          name='fat'
-          value={mealFormData.fat}
-          onChange={handleInputChange}
-          placeholder='Fat (g)'
-        ></input>
-        <label htmlFor='carbs'>Carbs (g)</label>
-        <input
-          type='text'
-          pattern='(?:0|[1-9]\d*)'
-          name='carbs'
-          value={mealFormData.carbs}
-          onChange={handleInputChange}
-          placeholder='Carbs (g)'
-        ></input>
-        <label htmlFor='servings'>Servings</label>
-        <input
-          type='text'
-          pattern='(?:0|[1-9]\d*)'
-          name='servings'
-          value={mealFormData.servings}
-          onChange={handleInputChange}
-          placeholder='Servings'
-        ></input>
-        <button type='submit'>Add Meal</button>
-      </form>
       {userMeals?.length > 0 ? (
         <MealTable meals={userMeals} onDelete={deleteMeal} />
       ) : (

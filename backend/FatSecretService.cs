@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-// using Newtonsoft.Json;
 using System.Text.Json;
 using backend.Models;
 
@@ -41,11 +40,11 @@ public class FatSecretService
         return responseObject.access_token;
     }
 
-    public async Task<ApiFoodSearchResponse> SearchFoodAsync(string query)
+    public async Task<ApiFoodSearchResponse> SearchFoodAsync(string query, int pageNumber = 1)
     {
         var token = await GetAccessTokenAsync();
 
-        var url = $"https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression={Uri.EscapeDataString(query)}&format=json";
+        var url = $"https://platform.fatsecret.com/rest/server.api?method=foods.search.v3&search_expression={Uri.EscapeDataString(query)}&page_number={pageNumber}&format=json";
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
         requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
@@ -58,32 +57,12 @@ public class FatSecretService
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Console.WriteLine(responseContent);
-
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
         var searchResult = JsonSerializer.Deserialize<ApiFoodSearchResponse>(responseContent, options);
-
-        // if (searchResult?.foods_search?.results?.food != null)
-        // {
-        //     foreach (var food in searchResult.foods_search.results.food)
-        //     {
-        //         Console.WriteLine($"Food Name: {food.food_name}");
-
-        //         if (food.servings?.serving != null && food.servings.serving.Count > 0)
-        //         {
-        //             var serving = food.servings.serving[0];  // Assuming the first serving is the one you need
-        //             Console.WriteLine($"Calories: {serving.calories}");
-        //             Console.WriteLine($"Carbohydrates: {serving.carbohydrate}");
-        //             Console.WriteLine($"Protein: {serving.protein}");
-        //             Console.WriteLine($"Fat: {serving.fat}");
-        //         }
-        //     }
-        // }
-
 
         return searchResult;
     }

@@ -42,8 +42,7 @@ function DashboardLayout({ user }: DashboardLayoutProps) {
         </div>
       </div>
       <div className='content'>
-        {' '}
-        <Outlet />{' '}
+        <Outlet />
       </div>
     </div>
   );

@@ -113,3 +113,26 @@ form {
     flex-direction: row;
     width: 100%;
 }
+
+/* MealCard styling */
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.meal-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meal-card-info {
+    display: flex;
+    gap: 10px;
+}
+
+.meal-card-name {
+    display: flex;
+}

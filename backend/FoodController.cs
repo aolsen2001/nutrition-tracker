@@ -13,9 +13,9 @@ public class FoodController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<IActionResult> SearchFood([FromQuery] string query)
+    public async Task<IActionResult> SearchFood([FromQuery] string query, [FromQuery] int pageNumber)
     {
-        var result = await _fatSecretService.SearchFoodAsync(query);
+        var result = await _fatSecretService.SearchFoodAsync(query, pageNumber);
         return Ok(result);
     }
 }

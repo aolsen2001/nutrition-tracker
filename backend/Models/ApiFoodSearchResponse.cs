@@ -1,5 +1,6 @@
 namespace backend.Models;
-using System.Collections.Generic;
+using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 public class ApiTokenResponse
@@ -43,8 +44,36 @@ public class Servings
 
 public class Serving
 {
-    public string calories { get; set; }
-    public string carbohydrate { get; set; }
-    public string protein { get; set; }
-    public string fat { get; set; }
+    [JsonConverter(typeof(JsonStringToFloatConverter))]
+    public float calories { get; set; }
+
+    [JsonConverter(typeof(JsonStringToFloatConverter))]
+    public float carbohydrate { get; set; }
+
+    [JsonConverter(typeof(JsonStringToFloatConverter))]
+    public float protein { get; set; }
+
+    [JsonConverter(typeof(JsonStringToFloatConverter))]
+    public float fat { get; set; }
+}
+
+// parses incoming string values for calories, carbs, protein and fat to int values
+public class JsonStringToFloatConverter : JsonConverter<float>
+{
+    public override float Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            if (float.TryParse(reader.GetString(), out var value))
+            {
+                return value;
+            }
+        }
+        return 0;
+    }
+
+    public override void Write(Utf8JsonWriter writer, float value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.ToString());
+    }
 }

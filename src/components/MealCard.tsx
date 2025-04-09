@@ -1,12 +1,11 @@
-import React from 'react';
 import '../styles.css';
 
 interface MealCardProps {
   mealName: string | null;
-  calories: string;
-  carbs: string;
-  protein: string;
-  fat: string;
+  calories: number;
+  carbs: number;
+  protein: number;
+  fat: number;
   onLogMeal: () => void;
 }
 

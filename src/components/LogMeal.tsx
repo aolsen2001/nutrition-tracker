@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { Food } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { Outlet, useNavigate } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import ModalContent from './ModalContent.tsx';
 import MealCard from './MealCard';
+import ModalFormContainer from './ModalFormContainer';
+import MealForm from './MealForm';
 import '../styles.css';
 
 const apiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -39,8 +39,9 @@ function LogMeal() {
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const [pageNumber, setPageNumber] = useState(0);
+  const [formIsOpen, setFormIsOpen] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<Food | null>(null);
   const [totalResults, setTotalResults] = useState(0);
-  const [showFormModal, setShowFormModal] = useState(false);
 
   const { data, error, isLoading } = useQuery({
     queryKey: ['meals', submittedQuery, pageNumber],
@@ -52,6 +53,17 @@ function LogMeal() {
   function handleSearch() {
     setSubmittedQuery(query);
     setPageNumber(0);
+  }
+
+  function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    console.log('Logged meal');
+    setFormIsOpen(false);
+  }
+
+  function handleLogMealClick(meal: Food) {
+    setSelectedMeal(meal);
+    setFormIsOpen(true);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -106,7 +118,7 @@ function LogMeal() {
                   carbs={meal.servings.serving[0].carbohydrate}
                   protein={meal.servings.serving[0].protein}
                   fat={meal.servings.serving[0].fat}
-                  onLogMeal={() => setShowFormModal(true)}
+                  onLogMeal={() => handleLogMealClick(meal)}
                 />
               ))
             : !isLoading &&
@@ -124,11 +136,23 @@ function LogMeal() {
           </button>
         </div>
       )}
-      {showFormModal &&
-        createPortal(
-          <ModalContent onClose={() => setShowFormModal(false)} />,
-          document.body
-        )}
+      {formIsOpen && selectedMeal && (
+        <ModalFormContainer
+          isOpen={formIsOpen}
+          onClose={() => setFormIsOpen(false)}
+          children={
+            <MealForm
+              name={selectedMeal.food_name}
+              calories={selectedMeal.servings.serving[0].calories}
+              carbs={selectedMeal.servings.serving[0].carbohydrate}
+              protein={selectedMeal.servings.serving[0].protein}
+              fat={selectedMeal.servings.serving[0].protein}
+              isNewMeal={true}
+              onFormSubmit={handleFormSubmit}
+            />
+          }
+        />
+      )}
       <Outlet />
     </>
   );

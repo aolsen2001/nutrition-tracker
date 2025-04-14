@@ -6,7 +6,7 @@ interface MealCardProps {
   carbs: number;
   protein: number;
   fat: number;
-  onLogMeal: () => void;
+  children?: React.ReactNode;
 }
 
 function MealCard({
@@ -15,7 +15,7 @@ function MealCard({
   carbs,
   protein,
   fat,
-  onLogMeal,
+  children,
 }: MealCardProps) {
   return (
     <>
@@ -24,12 +24,12 @@ function MealCard({
           <p>{mealName}</p>
         </div>
         <div className='meal-card-info'>
-          <p>Calories: {calories},</p>
-          <p>Carbs (g): {carbs},</p>
-          <p>Protein (g): {protein},</p>
+          <p>Calories: {calories}</p>
+          <p>Carbs (g): {carbs}</p>
+          <p>Protein (g): {protein}</p>
           <p>Fat (g): {fat}</p>
         </div>
-        <button onClick={onLogMeal}>Log Meal</button>
+        {children}
       </div>
     </>
   );

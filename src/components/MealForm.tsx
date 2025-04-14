@@ -23,7 +23,7 @@ function MealForm({
   onFormSubmit,
 }: MealFormProps) {
   const [mealFormData, setMealFormData] = useState<
-    Omit<Meal, 'id' | 'user_id' | 'date'>
+    Omit<Meal, 'meal_id' | 'user_id' | 'date'>
   >({
     name: name ? name : '',
     calories: calories ? calories : 0,
@@ -32,6 +32,9 @@ function MealForm({
     carbs: carbs ? carbs : 0,
     servings: 1,
   });
+  const [errors, setErrors] = useState(new Map<string, string[]>());
+
+  const formKeys = Object.keys(mealFormData);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -44,13 +47,72 @@ function MealForm({
   function handleKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
     if (e.key === 'Enter') {
       e.preventDefault();
-      onFormSubmit(e as React.FormEvent<HTMLFormElement>);
+      validateAndSubmit(e as React.FormEvent<HTMLFormElement>);
     }
+  }
+
+  function validateAndSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const newErrors = new Map(errors);
+    formKeys.forEach((key) => {
+      newErrors.set(key, []);
+    });
+
+    const calories = Number(mealFormData.calories);
+    if (isNaN(calories)) {
+      newErrors.get('calories')?.push('Value for calories must be a number');
+    } else {
+      if (calories < 0) {
+        newErrors.get('calories')?.push('Calories cannot be negative');
+      }
+    }
+
+    const carbs = Number(mealFormData.carbs);
+    if (isNaN(carbs)) {
+      newErrors.get('carbs')?.push('Value for carbs must be a number');
+    } else {
+      if (carbs < 0) {
+        newErrors.get('carbs')?.push('Carbs cannot be negative');
+      }
+    }
+
+    const protein = Number(mealFormData.protein);
+    if (isNaN(protein)) {
+      newErrors.get('protein')?.push('Value for protein must be a number');
+    } else {
+      if (protein < 0) {
+        newErrors.get('protein')?.push('Protein cannot be negative');
+      }
+    }
+
+    const fat = Number(mealFormData.fat);
+    if (isNaN(fat)) {
+      newErrors.get('fat')?.push('Value for fat content must be a number');
+    } else {
+      if (fat < 0) {
+        newErrors.get('fat')?.push('Fat content cannot be negative');
+      }
+    }
+
+    console.log(newErrors);
+
+    for (const key of formKeys) {
+      const keyErrors = newErrors.get(key);
+      if (keyErrors?.length) {
+        console.log('Errors present');
+        return;
+      }
+    }
+
+    console.log('No errors present');
+
+    onFormSubmit(e);
   }
 
   return (
     <>
-      <form onSubmit={onFormSubmit} onKeyDown={handleKeyDown}>
+      <form noValidate onSubmit={validateAndSubmit} onKeyDown={handleKeyDown}>
         <label htmlFor='name'>Name</label>
         <input
           type='text'

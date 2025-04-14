@@ -38,15 +38,18 @@ function LogMeal() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParam = searchParams.get('query');
-  const pageNumberParam = searchParams.get('pageNumber');
+  const pageParam = searchParams.get('pageNumber');
+  // validate that the page number from the URL parameters is a valid number and is not negative
+  const urlPageNumber =
+    pageParam && !isNaN(Number(pageParam)) && Number(pageParam) >= 0
+      ? Number(pageParam)
+      : 0;
 
   const [query, setQuery] = useState(queryParam ? queryParam : '');
   const [submittedQuery, setSubmittedQuery] = useState(
     queryParam ? queryParam : ''
   );
-  const [pageNumber, setPageNumber] = useState(
-    pageNumberParam ? Number(pageNumberParam) : 0
-  );
+  const [pageNumber, setPageNumber] = useState(urlPageNumber);
   const [formIsOpen, setFormIsOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Food | null>(null);
   const [totalResults, setTotalResults] = useState(0);
@@ -142,7 +145,11 @@ function LogMeal() {
                   carbs={meal.servings.serving[0].carbohydrate}
                   protein={meal.servings.serving[0].protein}
                   fat={meal.servings.serving[0].fat}
-                  onLogMeal={() => handleLogMealClick(meal)}
+                  children={
+                    <button onClick={() => handleLogMealClick(meal)}>
+                      Log Meal
+                    </button>
+                  }
                 />
               ))
             : !isLoading &&

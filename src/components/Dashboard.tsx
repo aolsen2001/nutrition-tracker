@@ -29,7 +29,7 @@ function MealTable({ meals, onDelete }: MealTableProps) {
         <tbody>
           {meals.map((m) => {
             return (
-              <tr key={m.id}>
+              <tr key={m.meal_id}>
                 <td>{m.user_id}</td>
                 <td>{m.name}</td>
                 <td>{m.calories}</td>
@@ -39,7 +39,7 @@ function MealTable({ meals, onDelete }: MealTableProps) {
                 <td>{m.servings}</td>
                 <td>{m.date.toLocaleDateString()}</td>
                 <td>
-                  <button onClick={() => onDelete(m.id)}>Delete</button>
+                  <button onClick={() => onDelete(m.meal_id)}>Delete</button>
                 </td>
               </tr>
             );
@@ -69,7 +69,7 @@ function Dashboard() {
 
   const meals: Meal[] = [
     {
-      id: 1,
+      meal_id: 1,
       user_id: '1',
       name: 'Chicken Breast',
       calories: 300,
@@ -80,7 +80,7 @@ function Dashboard() {
       date: new Date(),
     },
     {
-      id: 2,
+      meal_id: 2,
       user_id: '2',
       name: 'Greek Yogurt',
       calories: 200,
@@ -91,7 +91,7 @@ function Dashboard() {
       date: new Date(),
     },
     {
-      id: 3,
+      meal_id: 3,
       user_id: '3',
       name: 'Cheeseburger',
       calories: 500,
@@ -102,7 +102,7 @@ function Dashboard() {
       date: new Date(),
     },
     {
-      id: 4,
+      meal_id: 4,
       user_id: '4',
       name: 'Mixed Nuts',
       calories: 200,
@@ -113,7 +113,7 @@ function Dashboard() {
       date: new Date(),
     },
     {
-      id: 5,
+      meal_id: 5,
       user_id: '5',
       name: 'Protein Shake',
       calories: 400,
@@ -149,7 +149,7 @@ function Dashboard() {
   }, [userMeals]);
 
   const [mealFormData, setMealFormData] = useState<
-    Omit<Meal, 'id' | 'user_id' | 'date'>
+    Omit<Meal, 'meal_id' | 'user_id' | 'date'>
   >({
     name: '',
     calories: 0,
@@ -159,8 +159,8 @@ function Dashboard() {
     servings: 1,
   });
 
-  const deleteMeal = (id: number) => {
-    const filteredUserMeals = userMeals.filter((m) => m.id !== id);
+  const deleteMeal = (meal_id: number) => {
+    const filteredUserMeals = userMeals.filter((m) => m.meal_id !== meal_id);
     setUserMeals(filteredUserMeals);
   };
 
@@ -176,7 +176,7 @@ function Dashboard() {
     e.preventDefault();
 
     const newMeal: Meal = {
-      id: userMeals.length + 1,
+      meal_id: userMeals.length + 1,
       user_id: user?.uid ?? '',
       date: new Date(),
       ...mealFormData,

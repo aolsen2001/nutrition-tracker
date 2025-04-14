@@ -95,10 +95,23 @@ function MealForm({
       }
     }
 
+    const servings = Number(mealFormData.servings);
+    if (isNaN(servings)) {
+      newErrors.get('servings')?.push('Value for servings must be a number');
+    } else {
+      if (servings < 0) {
+        newErrors
+          .get('servings')
+          ?.push('Number of servings cannot be negative');
+      }
+    }
+
     console.log(newErrors);
 
+    setErrors(newErrors);
+
     for (const key of formKeys) {
-      const keyErrors = newErrors.get(key);
+      const keyErrors = errors.get(key);
       if (keyErrors?.length) {
         console.log('Errors present');
         return;

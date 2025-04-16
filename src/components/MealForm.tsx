@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Meal } from '../types';
+import { clsx } from 'clsx';
 
 interface MealFormProps {
   name: string | null;
@@ -51,10 +52,14 @@ function MealForm({
     }
   }
 
+  function hasErrors(fieldKey: string) {
+    return (errors.get(fieldKey)?.length ?? 0) > 0;
+  }
+
   function validateAndSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const newErrors = new Map(errors);
+    const newErrors = new Map();
     formKeys.forEach((key) => {
       newErrors.set(key, []);
     });
@@ -106,12 +111,10 @@ function MealForm({
       }
     }
 
-    console.log(newErrors);
-
     setErrors(newErrors);
 
     for (const key of formKeys) {
-      const keyErrors = errors.get(key);
+      const keyErrors = newErrors.get(key);
       if (keyErrors?.length) {
         console.log('Errors present');
         return;
@@ -128,6 +131,13 @@ function MealForm({
       <form noValidate onSubmit={validateAndSubmit} onKeyDown={handleKeyDown}>
         <label htmlFor='name'>Name</label>
         <input
+          className={clsx({
+            'form-input': mealFormData.name === '',
+            'form-input invalid-form-input':
+              mealFormData.name !== '' && errors.get('name')?.length,
+            'form-input valid-form-input':
+              mealFormData.name !== '' && !errors.get('name')?.length,
+          })}
           type='text'
           name='name'
           value={mealFormData.name}
@@ -136,6 +146,13 @@ function MealForm({
         ></input>
         <label htmlFor='calories'>Calories</label>
         <input
+          className={clsx({
+            'form-input': !mealFormData.calories,
+            'form-input invalid-form-input':
+              mealFormData.calories && errors.get('calories')?.length,
+            'form-input valid-form-input':
+              mealFormData.calories && !errors.get('calories')?.length,
+          })}
           type='text'
           pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='calories'
@@ -143,8 +160,24 @@ function MealForm({
           onChange={handleInputChange}
           placeholder='Calories'
         ></input>
+        {hasErrors('calories') && (
+          <ul className='error-list'>
+            {errors.get('calories')?.map((errorMsg, index) => (
+              <li className='error-msg' key={index}>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        )}
         <label htmlFor='protein'>Protein (g)</label>
         <input
+          className={clsx({
+            'form-input': !mealFormData.protein,
+            'form-input invalid-form-input':
+              mealFormData.protein && errors.get('protein')?.length,
+            'form-input valid-form-input':
+              mealFormData.protein && !errors.get('protein')?.length,
+          })}
           type='text'
           pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='protein'
@@ -152,8 +185,24 @@ function MealForm({
           onChange={handleInputChange}
           placeholder='Protein (g)'
         ></input>
+        {hasErrors('protein') && (
+          <ul className='error-list'>
+            {errors.get('protein')?.map((errorMsg, index) => (
+              <li className='error-msg' key={index}>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        )}
         <label htmlFor='fat'>Fat (g)</label>
         <input
+          className={clsx({
+            'form-input': !mealFormData.fat,
+            'form-input invalid-form-input':
+              mealFormData.fat && errors.get('fat')?.length,
+            'form-input valid-form-input':
+              mealFormData.fat && !errors.get('fat')?.length,
+          })}
           type='text'
           pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='fat'
@@ -161,8 +210,24 @@ function MealForm({
           onChange={handleInputChange}
           placeholder='Fat (g)'
         ></input>
+        {hasErrors('fat') && (
+          <ul className='error-list'>
+            {errors.get('fat')?.map((errorMsg, index) => (
+              <li className='error-msg' key={index}>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        )}
         <label htmlFor='carbs'>Carbs (g)</label>
         <input
+          className={clsx({
+            'form-input': !mealFormData.carbs,
+            'form-input invalid-form-input':
+              mealFormData.carbs && errors.get('carbs')?.length,
+            'form-input valid-form-input':
+              mealFormData.carbs && !errors.get('carbs')?.length,
+          })}
           type='text'
           pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='carbs'
@@ -170,8 +235,24 @@ function MealForm({
           onChange={handleInputChange}
           placeholder='Carbs (g)'
         ></input>
+        {hasErrors('carbs') && (
+          <ul className='error-list'>
+            {errors.get('carbs')?.map((errorMsg, index) => (
+              <li className='error-msg' key={index}>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        )}
         <label htmlFor='servings'>Servings</label>
         <input
+          className={clsx({
+            'form-input': !mealFormData.servings,
+            'form-input invalid-form-input':
+              mealFormData.servings && errors.get('servings')?.length,
+            'form-input valid-form-input':
+              mealFormData.servings && !errors.get('servings')?.length,
+          })}
           type='text'
           pattern='(?:0|[1-9]\d*)(?:\.\d+)?'
           name='servings'
@@ -179,6 +260,15 @@ function MealForm({
           onChange={handleInputChange}
           placeholder='Servings'
         ></input>
+        {hasErrors('servings') && (
+          <ul className='error-list'>
+            {errors.get('servings')?.map((errorMsg, index) => (
+              <li className='error-msg' key={index}>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        )}
         <button type='submit'>{isNewMeal ? 'Log Meal' : 'Edit Meal'}</button>
       </form>
     </>

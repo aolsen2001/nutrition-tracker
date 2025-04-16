@@ -1,7 +1,10 @@
-:root {
+html, body {
+    margin: 0;
+    height: 100vh;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    background-color: #6CCFF6;
 }
+
+/* form styling */
 
 .form-container {
     box-sizing: border-box;
@@ -16,7 +19,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background: #bbe4e9;
 }
 
 form {
@@ -67,4 +70,69 @@ form {
 
 .valid-form-input {
     border-color: green;
+}
+
+/* dashboard styling */
+
+.dashboard-container {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.dashboard-sidebar {
+    background-color: #C0D6DF;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    width: 150px;
+    padding: 10px;
+}
+
+.link-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+}
+
+.nav-item {
+    width: 100px;
+    text-align: center;
+}
+
+.nav-item:hover {
+    background-color: #96a8af;
+    cursor: pointer;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+/* MealCard styling */
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.meal-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.meal-card-info {
+    display: flex;
+    gap: 10px;
+}
+
+.meal-card-name {
+    display: flex;
 }

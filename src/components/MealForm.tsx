@@ -10,7 +10,11 @@ interface MealFormProps {
   fat: number | null;
   meal_id?: string;
   isNewMeal: boolean; // determines if the user is logging a new meal or editing an existing one
-  onFormSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onFormSubmit: (
+    e: React.FormEvent<HTMLFormElement>,
+    isNewMeal: boolean,
+    newMeal: Meal
+  ) => void;
 }
 
 function MealForm({
@@ -19,7 +23,6 @@ function MealForm({
   carbs,
   protein,
   fat,
-  meal_id,
   isNewMeal,
   onFormSubmit,
 }: MealFormProps) {
@@ -123,7 +126,17 @@ function MealForm({
 
     console.log('No errors present');
 
-    onFormSubmit(e);
+    const newMeal: Meal = {
+      name: name as string,
+      calories: calories,
+      carbs: carbs,
+      protein: protein,
+      fat: fat,
+      servings: servings,
+      date: new Date(),
+    };
+
+    onFormSubmit(e, isNewMeal, newMeal);
   }
 
   return (

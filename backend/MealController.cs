@@ -33,15 +33,24 @@ public class MealController : ControllerBase
     }
 
     [HttpPost("create-meal")]
-    public async Task<IActionResult> CreateMeal([FromQuery] Meal meal)
+    public async Task<IActionResult> CreateMeal([FromBody] Meal meal)
     {
+        Console.WriteLine("In CreateMeal");
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        _context.Meals.Add(meal);
-        await _context.SaveChangesAsync();
+        Console.WriteLine("ModelState valid");
+
+        try {
+            _context.Meals.Add(meal);
+            await _context.SaveChangesAsync();
+        } catch (Exception ex) {
+            Console.WriteLine(ex);
+        }
+
         return Ok(meal);
     }
 }

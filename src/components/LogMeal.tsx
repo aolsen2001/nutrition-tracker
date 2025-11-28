@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Food } from '../types';
+import { Food, Meal } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { Outlet, useNavigate, useSearchParams } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
@@ -17,6 +17,21 @@ const fetchMealsFromQuery = async (query: string, pageNumber: number) => {
   if (!res.ok) throw new Error('Failed to fetch foods');
   const data = await res.json();
   return data;
+};
+
+const logMeal = async (newMeal: Meal) => {
+  console.log(newMeal);
+  const res = await fetch(`${apiUrl}/api/meal/create-meal?meal=${newMeal}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newMeal),
+  });
+  console.log(JSON.stringify(newMeal));
+  if (!res.ok) throw new Error('Failed to log meal');
+  const data = await res.json();
+  console.log(`Successfully posted meal with ID: ${data.meal_id}`);
 };
 
 function LogMeal() {
@@ -67,9 +82,14 @@ function LogMeal() {
     setSearchParams({ query: query, pageNumber: String(0) });
   }
 
-  function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleFormSubmit(
+    e: React.FormEvent<HTMLFormElement>,
+    isNewMeal: boolean,
+    newMeal: Meal
+  ) {
     e.preventDefault();
-    console.log('Logged meal');
+    newMeal.user_id = user?.uid;
+    logMeal(newMeal);
     setFormIsOpen(false);
   }
 

@@ -51,6 +51,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    Console.WriteLine(dbContext.ToString());
     if (dbContext.Database.CanConnect())
     {
         Console.WriteLine("✅ Successfully connected to the database!");

@@ -19,16 +19,28 @@ public class MealController : ControllerBase
     {
         var result = await _context.Meals.Select(x => new Meal
         {
-            MealId = x.MealId,
-            UserId = x.UserId,
-            Name = x.Name,
-            Calories = x.Calories,
-            Protein = x.Protein,
-            Fat = x.Fat,
-            Carbs = x.Carbs,
-            Servings = x.Servings,
-            Date = x.Date
+            meal_id = x.meal_id,
+            user_id = x.user_id,
+            name = x.name,
+            calories = x.calories,
+            protein = x.protein,
+            fat = x.fat,
+            carbs = x.carbs,
+            servings = x.servings,
+            date = x.date
         }).ToListAsync();
+        return Ok(result);
+    }
+
+    [HttpGet("get-meals-by-user-id")]
+    public async Task<IActionResult> GetMealsByUserId(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return BadRequest("userId cannot be null or empty");
+        }
+
+        var result = await _context.Meals.Where(meal => meal.user_id == userId).ToListAsync();
         return Ok(result);
     }
 
@@ -36,6 +48,8 @@ public class MealController : ControllerBase
     public async Task<IActionResult> CreateMeal([FromBody] Meal meal)
     {
         Console.WriteLine("In CreateMeal");
+
+        Console.WriteLine(meal.ToString());
 
         if (!ModelState.IsValid)
         {

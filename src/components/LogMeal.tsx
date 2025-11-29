@@ -20,15 +20,14 @@ const fetchMealsFromQuery = async (query: string, pageNumber: number) => {
 };
 
 const logMeal = async (newMeal: Meal) => {
-  console.log(newMeal);
-  const res = await fetch(`${apiUrl}/api/meal/create-meal?meal=${newMeal}`, {
+  console.log(JSON.stringify(newMeal));
+  const res = await fetch(`${apiUrl}/meal/create-meal`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(newMeal),
   });
-  console.log(JSON.stringify(newMeal));
   if (!res.ok) throw new Error('Failed to log meal');
   const data = await res.json();
   console.log(`Successfully posted meal with ID: ${data.meal_id}`);

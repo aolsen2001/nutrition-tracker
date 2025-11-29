@@ -1,6 +1,5 @@
 export interface Meal {
   meal_id?: number;
-  // api_id: number | null; // unique identifer for food pulled from FatSecret API calls
   user_id?: string;
   name: string;
   calories: number;

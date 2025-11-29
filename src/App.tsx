@@ -24,7 +24,8 @@ function App() {
 
   return (
     <StrictMode>
-      <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
         <Routes>
           <Route path='/' element={<Landing />} />
           <Route path='/signup' element={<SignUp />} />
@@ -34,14 +35,13 @@ function App() {
             <Route
               path='/dashboard/logmeal'
               element={
-                <QueryClientProvider client={queryClient}>
                   <LogMeal />
-                </QueryClientProvider>
               }
             />
           </Route>
         </Routes>
       </BrowserRouter>
+      </QueryClientProvider>
     </StrictMode>
   );
 }

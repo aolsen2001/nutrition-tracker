@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Meal } from '../types';
 import { Outlet, useNavigate } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
+import { useQuery } from '@tanstack/react-query';
 import '../styles.css';
 
 interface MealTableProps {
   meals: Meal[];
-  onDelete: (id: number) => void;
+  onDelete: (id: number | undefined) => void;
 }
 
 function MealTable({ meals, onDelete }: MealTableProps) {
@@ -37,7 +38,7 @@ function MealTable({ meals, onDelete }: MealTableProps) {
                 <td>{m.fat}</td>
                 <td>{m.carbs}</td>
                 <td>{m.servings}</td>
-                <td>{m.date.toLocaleDateString()}</td>
+                <td>{new Date(m.date).toLocaleDateString()}</td>
                 <td>
                   <button onClick={() => onDelete(m.meal_id)}>Delete</button>
                 </td>
@@ -54,6 +55,8 @@ function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
   const auth = getAuth();
+  const [authLoading, setAuthLoading] = useState<Boolean>(true);
+  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -63,6 +66,7 @@ function Dashboard() {
         setUser(null);
         navigate('/login');
       }
+      setAuthLoading(false);
     });
     return () => unsubscribe();
   }, [auth, navigate]);
@@ -159,7 +163,10 @@ function Dashboard() {
     servings: 1,
   });
 
-  const deleteMeal = (meal_id: number) => {
+  const deleteMeal = (meal_id: number | undefined) => {
+    if (meal_id === undefined) {
+      return;
+    }
     const filteredUserMeals = userMeals.filter((m) => m.meal_id !== meal_id);
     setUserMeals(filteredUserMeals);
   };
@@ -194,24 +201,53 @@ function Dashboard() {
     });
   };
 
+  const fetchMealsFromUserId = async (userId: string | undefined) => {
+    if (!userId) {
+      console.log('userId is undefined!');
+      return;
+    }
+    console.log(`Fetching meals for user with userId: ${userId}`);
+    const res = await fetch(`${apiUrl}/meal/get-meals-by-user-id?userId=${userId}`);
+    if (!res.ok) throw new Error(`fetchMealsFromUserId failed with code: ${res.status}`);
+    const data = await res.json();
+    console.log(data);
+    return data;
+  };
+
+  const {data, error, isLoading} = useQuery({
+    queryKey: ['dbUserMeals'],
+    queryFn: async() => fetchMealsFromUserId(user?.uid),
+    enabled: !!user?.uid && !authLoading,
+  });
+
   // for debugging purposes
   useEffect(() => {
     console.log(userMeals);
   }, [userMeals]);
 
   return (
+    // <>
+    //   {userMeals?.length > 0 ? (
+    //     <MealTable meals={userMeals} onDelete={deleteMeal} />
+    //   ) : (
+    //     <div>No Meals Logged for Today ({new Date().toLocaleDateString()})</div>
+    //   )}
+    //     <div>
+    //   <div>Total Calories: {totalCalories}</div>
+    //   <div>Total Protein: {totalProtein}</div>
+    //   <div>Total Fat: {totalFat}</div>
+    //   <div>Total Carbs: {totalCarbs}</div>
+    // </div>
+    //   <Outlet />
+    // </>
     <>
-      {userMeals?.length > 0 ? (
-        <MealTable meals={userMeals} onDelete={deleteMeal} />
-      ) : (
-        <div>No Meals Logged for Today ({new Date().toLocaleDateString()})</div>
+      {isLoading && <p>Loading...</p>}
+      {error && (
+        <p style={{ color: 'red' }}>Error: {(error as Error).message}</p>
       )}
-      <div>
-        <div>Total Calories: {totalCalories}</div>
-        <div>Total Protein: {totalProtein}</div>
-        <div>Total Fat: {totalFat}</div>
-        <div>Total Carbs: {totalCarbs}</div>
-      </div>
+      {data?.length > 0 ? (
+        <MealTable meals={data} onDelete={deleteMeal}></MealTable>
+      ): (<div>No Meals Logged for Today </div>)}
       <Outlet />
     </>
   );

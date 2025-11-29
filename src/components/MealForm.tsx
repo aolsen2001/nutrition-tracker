@@ -136,6 +136,8 @@ function MealForm({
       date: new Date(),
     };
 
+    console.log(newMeal);
+
     onFormSubmit(e, isNewMeal, newMeal);
   }
 

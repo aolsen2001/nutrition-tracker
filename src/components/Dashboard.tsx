@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { Meal } from '../types';
 import { Outlet, useNavigate } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import '../styles.css';
 
 interface MealTableProps {
   meals: Meal[];
-  onDelete: (id: number | undefined) => void;
+  onDelete: (id: string | undefined) => void;
 }
 
 function MealTable({ meals, onDelete }: MealTableProps) {
@@ -56,6 +56,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const auth = getAuth();
   const [authLoading, setAuthLoading] = useState<Boolean>(true);
+  const queryClient = useQueryClient();
   const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
@@ -67,90 +68,32 @@ function Dashboard() {
         navigate('/login');
       }
       setAuthLoading(false);
+      console.log('Auth loading is false');
     });
     return () => unsubscribe();
   }, [auth, navigate]);
 
-  const meals: Meal[] = [
-    {
-      meal_id: 1,
-      user_id: '1',
-      name: 'Chicken Breast',
-      calories: 300,
-      protein: 30,
-      fat: 5,
-      carbs: 10,
-      servings: 1,
-      date: new Date(),
-    },
-    {
-      meal_id: 2,
-      user_id: '2',
-      name: 'Greek Yogurt',
-      calories: 200,
-      protein: 15,
-      fat: 5,
-      carbs: 10,
-      servings: 2,
-      date: new Date(),
-    },
-    {
-      meal_id: 3,
-      user_id: '3',
-      name: 'Cheeseburger',
-      calories: 500,
-      protein: 22,
-      fat: 5,
-      carbs: 10,
-      servings: 1,
-      date: new Date(),
-    },
-    {
-      meal_id: 4,
-      user_id: '4',
-      name: 'Mixed Nuts',
-      calories: 200,
-      protein: 12,
-      fat: 5,
-      carbs: 10,
-      servings: 3,
-      date: new Date(),
-    },
-    {
-      meal_id: 5,
-      user_id: '5',
-      name: 'Protein Shake',
-      calories: 400,
-      protein: 40,
-      fat: 5,
-      carbs: 10,
-      servings: 1,
-      date: new Date(),
-    },
-  ];
-
-  const [userMeals, setUserMeals] = useState<Meal[]>(meals);
   const [totalCalories, setTotalCalories] = useState<number>(0);
   const [totalProtein, setTotalProtein] = useState<number>(0);
   const [totalFat, setTotalFat] = useState<number>(0);
   const [totalCarbs, setTotalCarbs] = useState<number>(0);
 
-  useEffect(() => {
-    const newTotals = userMeals.reduce(
-      (acc, meal) => {
-        acc.calories += meal.calories * meal.servings;
-        acc.protein += meal.protein * meal.servings;
-        acc.fat += meal.fat * meal.servings;
-        acc.carbs += meal.carbs * meal.servings;
-        return acc;
-      },
-      { calories: 0, protein: 0, fat: 0, carbs: 0 }
-    );
-    setTotalCalories(newTotals.calories);
-    setTotalProtein(newTotals.protein);
-    setTotalFat(newTotals.fat);
-    setTotalCarbs(newTotals.carbs);
-  }, [userMeals]);
+  // useEffect(() => {
+  //   const newTotals = userMeals.reduce(
+  //     (acc, meal) => {
+  //       acc.calories += meal.calories * meal.servings;
+  //       acc.protein += meal.protein * meal.servings;
+  //       acc.fat += meal.fat * meal.servings;
+  //       acc.carbs += meal.carbs * meal.servings;
+  //       return acc;
+  //     },
+  //     { calories: 0, protein: 0, fat: 0, carbs: 0 }
+  //   );
+  //   setTotalCalories(newTotals.calories);
+  //   setTotalProtein(newTotals.protein);
+  //   setTotalFat(newTotals.fat);
+  //   setTotalCarbs(newTotals.carbs);
+  // }, [userMeals]);
 
   const [mealFormData, setMealFormData] = useState<
     Omit<Meal, 'meal_id' | 'user_id' | 'date'>
@@ -163,43 +106,27 @@ function Dashboard() {
     servings: 1,
   });
 
-  const deleteMeal = (meal_id: number | undefined) => {
-    if (meal_id === undefined) {
-      return;
-    }
-    const filteredUserMeals = userMeals.filter((m) => m.meal_id !== meal_id);
-    setUserMeals(filteredUserMeals);
-  };
+  // const deleteMeal = (meal_id: number | undefined) => {
+  //   if (meal_id === undefined) {
+  //     return;
+  //   }
+  //   const filteredUserMeals = userMeals.filter((m) => m.meal_id !== meal_id);
+  //   setUserMeals(filteredUserMeals);
+  // };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setMealFormData((prev) => ({
-      ...prev,
-      [name]: Number(value) || value,
-    }));
-  };
-
-  const addNewMeal = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const newMeal: Meal = {
-      meal_id: userMeals.length + 1,
-      user_id: user?.uid ?? '',
-      date: new Date(),
-      ...mealFormData,
-    };
-
-    setUserMeals([...userMeals, newMeal]);
-
-    setMealFormData({
-      name: '',
-      calories: 0,
-      protein: 0,
-      fat: 0,
-      carbs: 0,
-      servings: 1,
-    });
-  };
+  // const deleteMeal = async (mealId: string | undefined) => {
+  //   if (!mealId) {
+  //     console.log('mealId is undefined');
+  //   }
+  //   const res = await fetch(`${apiUrl}/meal/delete-meal?mealId=${mealId}`, {
+  //     method: 'DELETE'
+  //   });
+  //   if (res.status !== 204) {
+  //     console.log(`Failed to delete meal: ${res.statusText}`);
+  //   }
+  //   console.log(`Successfully deleted meal with id ${mealId}`);
+  //   return mealId;
+  // };
 
   const fetchMealsFromUserId = async (userId: string | undefined) => {
     if (!userId) {
@@ -215,15 +142,56 @@ function Dashboard() {
   };
 
   const {data, error, isLoading} = useQuery({
-    queryKey: ['dbUserMeals'],
+    queryKey: ['dbUserMeals', user?.uid],
     queryFn: async() => fetchMealsFromUserId(user?.uid),
-    enabled: !!user?.uid && !authLoading,
+    enabled: !authLoading,
   });
 
+  const deleteMealMutation = useMutation({
+    mutationFn: async (mealId: string) => {
+      const res = await fetch(`${apiUrl}/meal/delete-meal?mealId=${mealId}`, {
+        method: 'DELETE'
+      });
+      if (res.status !== 204) {
+        console.log(`Failed to delete meal: ${res.statusText}`);
+      }
+      console.log(`Successfully deleted meal with id ${mealId}`);
+      return mealId;
+    },
+    onMutate: async (mealId: string) => {
+      console.log(`User uid in mutate: ${user?.uid}`);
+      await queryClient.cancelQueries({ queryKey: ['dbUserMeals', user?.uid]});
+      const previousUserMeals = queryClient.getQueryData(['dbUserMeals', user?.uid]) ?? [];
+      console.log(previousUserMeals);
+      queryClient.setQueryData(['dbUserMeals', user?.uid], (old: Meal[]) => old?.filter((meal) => meal.meal_id !== mealId));
+      console.log(`Deleted mealId (mutate): ${mealId}`);
+      return { previousUserMeals };
+    },
+    onError: (err, mealId, context) => {
+      if (context?.previousUserMeals) {
+        queryClient.setQueryData(['dbUserMeals', user?.uid], context.previousUserMeals);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['dbUserMeals', user?.uid]});
+    }
+  });
+
+  const handleDeleteMeal = (mealId: string | undefined) => {
+    if (!mealId) {
+      console.warn('Failed to delete meal: mealId is undefined');
+      return;
+    }
+    if (!user?.uid) {
+      console.warn('User uid is undefined');
+    }
+    deleteMealMutation.mutate(mealId);
+  }
+
   // for debugging purposes
-  useEffect(() => {
-    console.log(userMeals);
-  }, [userMeals]);
+  // useEffect(() => {
+  //   console.log(userMeals);
+  // }, [userMeals]);
 
   return (
     // <>
@@ -246,8 +214,8 @@ function Dashboard() {
         <p style={{ color: 'red' }}>Error: {(error as Error).message}</p>
       )}
       {data?.length > 0 ? (
-        <MealTable meals={data} onDelete={deleteMeal}></MealTable>
-      ): (<div>No Meals Logged for Today </div>)}
+        <MealTable meals={data} onDelete={handleDeleteMeal}></MealTable>
+      ): (<div>No Meals Logged for Today ({new Date().toLocaleDateString()})</div>)}
       <Outlet />
     </>
   );

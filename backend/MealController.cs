@@ -44,6 +44,27 @@ public class MealController : ControllerBase
         return Ok(result);
     }
 
+    [HttpDelete("delete-meal")]
+    public async Task<IActionResult> DeleteMeal(Guid mealId)
+    {
+        if (mealId == Guid.Empty)
+        {
+            return BadRequest("mealId cannot be empty");
+        }
+
+        var mealToDelete = await _context.Meals.FirstOrDefaultAsync(meal => meal.meal_id == mealId);
+
+        if (mealToDelete == null)
+        {
+            return NotFound("Meal not found");
+        }
+
+        _context.Meals.Remove(mealToDelete);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpPost("create-meal")]
     public async Task<IActionResult> CreateMeal([FromBody] Meal meal)
     {

@@ -1,5 +1,5 @@
 export interface Meal {
-  meal_id?: number;
+  meal_id?: string;
   user_id?: string;
   name: string;
   calories: number;

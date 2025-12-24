@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using System.Threading.Tasks;
 
-[Route("api/meal")]
+[Route("api/meals")]
 [ApiController]
 public class MealController : ControllerBase
 {
@@ -14,10 +14,17 @@ public class MealController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("meals")]
-    public async Task<IActionResult> GetMeals()
+    [HttpGet]
+    public async Task<IActionResult> GetMeals([FromQuery] string userId)
     {
-        var result = await _context.Meals.Select(x => new Meal
+        IQueryable<Meal> query = _context.Meals;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            query = query.Where(meal => meal.user_id == userId);    
+        }
+
+        var result = await query.Select(x => new Meal
         {
             meal_id = x.meal_id,
             user_id = x.user_id,
@@ -29,22 +36,11 @@ public class MealController : ControllerBase
             servings = x.servings,
             date = x.date
         }).ToListAsync();
+
         return Ok(result);
     }
 
-    [HttpGet("get-meals-by-user-id")]
-    public async Task<IActionResult> GetMealsByUserId(string userId)
-    {
-        if (string.IsNullOrEmpty(userId))
-        {
-            return BadRequest("userId cannot be null or empty");
-        }
-
-        var result = await _context.Meals.Where(meal => meal.user_id == userId).ToListAsync();
-        return Ok(result);
-    }
-
-    [HttpDelete("delete-meal")]
+    [HttpDelete("delete")]
     public async Task<IActionResult> DeleteMeal(Guid mealId)
     {
         if (mealId == Guid.Empty)
@@ -65,7 +61,7 @@ public class MealController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("create-meal")]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateMeal([FromBody] Meal meal)
     {
         Console.WriteLine("In CreateMeal");

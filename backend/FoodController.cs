@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-[Route("api/food")]
+[Route("api/foods")]
 [ApiController]
 public class FoodController : ControllerBase
 {

@@ -2,10 +2,10 @@ namespace backend.Models;
 
 public class User
 {
-    public Guid UserId { get; set; }
-    public string Email { get; set; }
-    public int CalorieGoal { get; set; }
-    public int ProteinGoal { get; set; }
-    public int CarbGoal { get; set; }
-    public int FatGoal { get; set; }
+    public string user_id { get; set; }
+    public string email { get; set; }
+    public int calorie_goal { get; set; }
+    public int protein_goal { get; set; }
+    public int carb_goal { get; set; }
+    public int fat_goal { get; set; }
 }

@@ -16,7 +16,6 @@ function MealTable({ meals, onDelete }: MealTableProps) {
       <table>
         <thead>
           <tr>
-            <th>User ID</th>
             <th>Name</th>
             <th>Calories</th>
             <th>Protein (g)</th>
@@ -31,7 +30,6 @@ function MealTable({ meals, onDelete }: MealTableProps) {
           {meals.map((m) => {
             return (
               <tr key={m.meal_id}>
-                <td>{m.user_id}</td>
                 <td>{m.name}</td>
                 <td>{m.calories}</td>
                 <td>{m.protein}</td>
@@ -118,7 +116,7 @@ function Dashboard() {
   //   if (!mealId) {
   //     console.log('mealId is undefined');
   //   }
-  //   const res = await fetch(`${apiUrl}/meal/delete-meal?mealId=${mealId}`, {
+  //   const res = await fetch(`${apiUrl}/meals/delete-meal?mealId=${mealId}`, {
   //     method: 'DELETE'
   //   });
   //   if (res.status !== 204) {
@@ -134,7 +132,7 @@ function Dashboard() {
       return;
     }
     console.log(`Fetching meals for user with userId: ${userId}`);
-    const res = await fetch(`${apiUrl}/meal/get-meals-by-user-id?userId=${userId}`);
+    const res = await fetch(`${apiUrl}/meals?userId=${userId}`);
     if (!res.ok) throw new Error(`fetchMealsFromUserId failed with code: ${res.status}`);
     const data = await res.json();
     console.log(data);
@@ -149,7 +147,7 @@ function Dashboard() {
 
   const deleteMealMutation = useMutation({
     mutationFn: async (mealId: string) => {
-      const res = await fetch(`${apiUrl}/meal/delete-meal?mealId=${mealId}`, {
+      const res = await fetch(`${apiUrl}/meals/delete-meal?mealId=${mealId}`, {
         method: 'DELETE'
       });
       if (res.status !== 204) {

@@ -23,7 +23,7 @@ function Landing() {
 
   return (
     <div className='landing-container'>
-      <h1>Welcome to NutriLite!</h1>
+      <h1>Welcome to Nutrition Tracker!</h1>
       <p>A simple nutrition tracker to help achieve your nutrition goals.</p>
       <button onClick={() => navigate('/login')}>Login</button>
       <button onClick={() => navigate('/signup')}>Sign Up</button>

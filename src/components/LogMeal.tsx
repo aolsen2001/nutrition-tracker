@@ -12,7 +12,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const fetchMealsFromQuery = async (query: string, pageNumber: number) => {
   const res = await fetch(
-    `${apiUrl}/food/search?query=${query}&pageNumber=${pageNumber}`
+    `${apiUrl}/foods/search?query=${query}&pageNumber=${pageNumber}`
   );
   if (!res.ok) throw new Error('Failed to fetch foods');
   const data = await res.json();
@@ -21,7 +21,7 @@ const fetchMealsFromQuery = async (query: string, pageNumber: number) => {
 
 const logMeal = async (newMeal: Meal) => {
   console.log(JSON.stringify(newMeal));
-  const res = await fetch(`${apiUrl}/meal/create-meal`, {
+  const res = await fetch(`${apiUrl}/meals/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

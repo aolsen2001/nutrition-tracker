@@ -24,7 +24,7 @@ function DashboardLayout({ user }: DashboardLayoutProps) {
     <div className='dashboard-container'>
       <div className='dashboard-sidebar'>
         <div className='link-container'>
-          <h1>NutriLite</h1>
+          <h1>Nutrition Tracker</h1>
           <div>Currently Signed in As: {user?.email}</div>
           <div className='nav-item' onClick={() => navigate('/dashboard')}>
             Overview

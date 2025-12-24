@@ -139,15 +139,17 @@ function Dashboard() {
     return data;
   };
 
+  console.log('query key uid (render):', user?.uid);
+
   const {data, error, isLoading} = useQuery({
     queryKey: ['dbUserMeals', user?.uid],
     queryFn: async() => fetchMealsFromUserId(user?.uid),
-    enabled: !authLoading,
+    enabled: !!user?.uid && !authLoading,
   });
 
   const deleteMealMutation = useMutation({
     mutationFn: async (mealId: string) => {
-      const res = await fetch(`${apiUrl}/meals/delete-meal?mealId=${mealId}`, {
+      const res = await fetch(`${apiUrl}/meals/delete/${mealId}`, {
         method: 'DELETE'
       });
       if (res.status !== 204) {
@@ -161,7 +163,7 @@ function Dashboard() {
       await queryClient.cancelQueries({ queryKey: ['dbUserMeals', user?.uid]});
       const previousUserMeals = queryClient.getQueryData(['dbUserMeals', user?.uid]) ?? [];
       console.log(previousUserMeals);
-      queryClient.setQueryData(['dbUserMeals', user?.uid], (old: Meal[]) => old?.filter((meal) => meal.meal_id !== mealId));
+      queryClient.setQueryData(['dbUserMeals', user?.uid], (old: Meal[] = []) => old?.filter((meal) => meal.meal_id !== mealId));
       console.log(`Deleted mealId (mutate): ${mealId}`);
       return { previousUserMeals };
     },

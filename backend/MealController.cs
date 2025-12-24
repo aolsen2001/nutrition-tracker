@@ -40,27 +40,6 @@ public class MealController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteMeal(Guid mealId)
-    {
-        if (mealId == Guid.Empty)
-        {
-            return BadRequest("mealId cannot be empty");
-        }
-
-        var mealToDelete = await _context.Meals.FirstOrDefaultAsync(meal => meal.meal_id == mealId);
-
-        if (mealToDelete == null)
-        {
-            return NotFound("Meal not found");
-        }
-
-        _context.Meals.Remove(mealToDelete);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
     [HttpPost("create")]
     public async Task<IActionResult> CreateMeal([FromBody] Meal meal)
     {
@@ -83,5 +62,28 @@ public class MealController : ControllerBase
         }
 
         return Ok(meal);
+    }
+
+    [HttpPut("edit")]
+
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> DeleteMeal(Guid id)
+    {
+        if (id == Guid.Empty)
+        {
+            return BadRequest("id cannot be empty");
+        }
+
+        var mealToDelete = await _context.Meals.FirstOrDefaultAsync(meal => meal.meal_id == id);
+
+        if (mealToDelete == null)
+        {
+            return NotFound("Meal not found");
+        }
+
+        _context.Meals.Remove(mealToDelete);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }

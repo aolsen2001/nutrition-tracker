@@ -1,7 +1,9 @@
 namespace backend.Models;
+using System.ComponentModel.DataAnnotations;
 
 public class User
 {
+    [Key]
     public string user_id { get; set; }
     public string email { get; set; }
     public int calorie_goal { get; set; }

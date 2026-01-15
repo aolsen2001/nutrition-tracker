@@ -66,7 +66,6 @@ function Dashboard() {
         navigate('/login');
       }
       setAuthLoading(false);
-      console.log('Auth loading is false');
     });
     return () => unsubscribe();
   }, [auth, navigate]);
@@ -135,11 +134,8 @@ function Dashboard() {
     const res = await fetch(`${apiUrl}/meals?userId=${userId}`);
     if (!res.ok) throw new Error(`fetchMealsFromUserId failed with code: ${res.status}`);
     const data = await res.json();
-    console.log(data);
     return data;
   };
-
-  console.log('query key uid (render):', user?.uid);
 
   const {data, error, isLoading} = useQuery({
     queryKey: ['dbUserMeals', user?.uid],
@@ -159,10 +155,8 @@ function Dashboard() {
       return mealId;
     },
     onMutate: async (mealId: string) => {
-      console.log(`User uid in mutate: ${user?.uid}`);
       await queryClient.cancelQueries({ queryKey: ['dbUserMeals', user?.uid]});
       const previousUserMeals = queryClient.getQueryData(['dbUserMeals', user?.uid]) ?? [];
-      console.log(previousUserMeals);
       queryClient.setQueryData(['dbUserMeals', user?.uid], (old: Meal[] = []) => old?.filter((meal) => meal.meal_id !== mealId));
       console.log(`Deleted mealId (mutate): ${mealId}`);
       return { previousUserMeals };
@@ -187,11 +181,6 @@ function Dashboard() {
     }
     deleteMealMutation.mutate(mealId);
   }
-
-  // for debugging purposes
-  // useEffect(() => {
-  //   console.log(userMeals);
-  // }, [userMeals]);
 
   return (
     // <>

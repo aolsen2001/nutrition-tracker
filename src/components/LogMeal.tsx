@@ -3,7 +3,7 @@ import { Food, Meal } from '../types';
 import { useQuery } from '@tanstack/react-query';
 import { Outlet, useNavigate, useSearchParams } from 'react-router';
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth';
-import MealCard from './MealCard';
+import FoodCard from './FoodCard';
 import ModalFormContainer from './ModalFormContainer';
 import MealForm from './MealForm';
 import '../styles.css';
@@ -65,7 +65,15 @@ function LogMeal() {
   );
   const [pageNumber, setPageNumber] = useState(urlPageNumber);
   const [formIsOpen, setFormIsOpen] = useState(false);
-  const [selectedMeal, setSelectedMeal] = useState<Food | null>(null);
+  const [mealToLog, setMealToLog] = useState<Meal>({
+      name: '',
+      calories: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      servings: 1,
+      date: new Date()
+    });
   const [totalResults, setTotalResults] = useState(0);
 
   const { data, error, isLoading } = useQuery({
@@ -92,8 +100,17 @@ function LogMeal() {
     setFormIsOpen(false);
   }
 
-  function handleLogMealClick(meal: Food) {
-    setSelectedMeal(meal);
+  function handleLogMealClick(apiFoodItem: Food | null) {
+    const meal: Meal = {
+      name: apiFoodItem?.food_name ?? '',
+      calories: apiFoodItem?.servings?.serving[0]?.calories ?? 0,
+      protein: apiFoodItem?.servings?.serving[0]?.protein ?? 0,
+      fat: apiFoodItem?.servings?.serving[0]?.fat ?? 0,
+      carbs: apiFoodItem?.servings?.serving[0]?.carbohydrate ?? 0,
+      servings: 1,
+      date: new Date()
+    }
+    setMealToLog(meal);
     setFormIsOpen(true);
   }
 
@@ -127,7 +144,6 @@ function LogMeal() {
   }
 
   function handleDialogClose() {
-    console.log('Closed dialog.');
     setFormIsOpen(false);
   }
 
@@ -140,14 +156,17 @@ function LogMeal() {
 
   return (
     <>
-      <div>
-        This is the log meal page. Search functionality goes here
+      <div className='flex-column'>
+        Search for a meal
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <button onClick={handleSearch}>Search</button>
+        OR
+        Log your own
+        <button onClick={() => handleLogMealClick(null)}>Log Meal</button>
         {isLoading && <p>Loading...</p>}
         {error && (
           <p style={{ color: 'red' }}>Error: {(error as Error).message}</p>
@@ -157,15 +176,11 @@ function LogMeal() {
         <div className='card-container'>
           {data?.foods_search.results &&
           data?.foods_search.results.food.length > 0
-            ? data.foods_search.results.food.map((meal: Food) => (
-                <MealCard
-                  mealName={meal.food_name}
-                  calories={meal.servings.serving[0].calories}
-                  carbs={meal.servings.serving[0].carbohydrate}
-                  protein={meal.servings.serving[0].protein}
-                  fat={meal.servings.serving[0].fat}
+            ? data.foods_search.results.food.map((apiFoodItem: Food) => (
+                <FoodCard
+                  food={apiFoodItem}
                   children={
-                    <button onClick={() => handleLogMealClick(meal)}>
+                    <button onClick={() => handleLogMealClick(apiFoodItem)}>
                       Log Meal
                     </button>
                   }
@@ -186,17 +201,13 @@ function LogMeal() {
           </button>
         </div>
       )}
-      {formIsOpen && selectedMeal && (
+      {formIsOpen && (
         <ModalFormContainer
           isOpen={formIsOpen}
           onClose={handleDialogClose}
           children={
             <MealForm
-              name={selectedMeal.food_name}
-              calories={selectedMeal.servings.serving[0].calories}
-              carbs={selectedMeal.servings.serving[0].carbohydrate}
-              protein={selectedMeal.servings.serving[0].protein}
-              fat={selectedMeal.servings.serving[0].protein}
+              mealToLog={mealToLog}
               isNewMeal={true}
               onFormSubmit={handleFormSubmit}
             />

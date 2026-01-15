@@ -51,14 +51,13 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    Console.WriteLine(dbContext.ToString());
     if (dbContext.Database.CanConnect())
     {
-        Console.WriteLine("✅ Successfully connected to the database!");
+        Console.WriteLine("Connected to the database");
     }
     else
     {
-        Console.WriteLine("❌ Failed to connect to the database.");
+        Console.WriteLine("Failed to connect to the database");
     }
 }
 

@@ -1,6 +1,11 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html, body {
     margin: 0;
-    height: 100vh;
+    padding: 0;
+    height: 100%;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
@@ -78,7 +83,7 @@ form {
     background-color: white;
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    height: 100dvh;
 }
 
 .dashboard-sidebar {
@@ -86,7 +91,7 @@ form {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100vh;
+    /* height: 100dvh; */
     width: 150px;
     padding: 10px;
 }
@@ -135,4 +140,9 @@ form {
 
 .meal-card-name {
     display: flex;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
 }

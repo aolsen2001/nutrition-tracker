@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Meal } from '../types';
+import { Meal, Food } from '../types';
 import { clsx } from 'clsx';
 
 interface MealFormProps {
-  name: string | null;
-  calories: number | null;
-  carbs: number | null;
-  protein: number | null;
-  fat: number | null;
-  meal_id?: string;
+  // name: string | null;
+  // calories: number | null;
+  // carbs: number | null;
+  // protein: number | null;
+  // fat: number | null;
+  // meal_id?: string;
+  mealToLog: Meal;
   isNewMeal: boolean; // determines if the user is logging a new meal or editing an existing one
   onFormSubmit: (
     e: React.FormEvent<HTMLFormElement>,
@@ -18,23 +19,19 @@ interface MealFormProps {
 }
 
 function MealForm({
-  name,
-  calories,
-  carbs,
-  protein,
-  fat,
+  mealToLog,
   isNewMeal,
   onFormSubmit,
 }: MealFormProps) {
   const [mealFormData, setMealFormData] = useState<
     Omit<Meal, 'meal_id' | 'user_id' | 'date'>
   >({
-    name: name ? name : '',
-    calories: calories ? calories : 0,
-    protein: protein ? protein : 0,
-    fat: fat ? fat : 0,
-    carbs: carbs ? carbs : 0,
-    servings: 1,
+    name: mealToLog.name,
+    calories: mealToLog.calories,
+    protein: mealToLog.protein,
+    fat: mealToLog.fat,
+    carbs: mealToLog.carbs,
+    servings: mealToLog.servings,
   });
   const [errors, setErrors] = useState(new Map<string, string[]>());
 
@@ -66,6 +63,11 @@ function MealForm({
     formKeys.forEach((key) => {
       newErrors.set(key, []);
     });
+
+    const name = mealFormData.name;
+    if (name === '') {
+      newErrors.get('name')?.push('Name cannot be empty');
+    }
 
     const calories = Number(mealFormData.calories);
     if (isNaN(calories)) {
@@ -127,7 +129,7 @@ function MealForm({
     console.log('No errors present');
 
     const newMeal: Meal = {
-      name: name as string,
+      name: name,
       calories: calories,
       carbs: carbs,
       protein: protein,

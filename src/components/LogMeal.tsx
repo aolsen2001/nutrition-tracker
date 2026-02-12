@@ -16,6 +16,7 @@ const fetchMealsFromQuery = async (query: string, pageNumber: number) => {
   );
   if (!res.ok) throw new Error('Failed to fetch foods');
   const data = await res.json();
+  console.log(data);
   return data;
 };
 
@@ -102,11 +103,11 @@ function LogMeal() {
 
   function handleLogMealClick(apiFoodItem: Food | null) {
     const meal: Meal = {
-      name: apiFoodItem?.food_name ?? '',
-      calories: apiFoodItem?.servings?.serving[0]?.calories ?? 0,
-      protein: apiFoodItem?.servings?.serving[0]?.protein ?? 0,
-      fat: apiFoodItem?.servings?.serving[0]?.fat ?? 0,
-      carbs: apiFoodItem?.servings?.serving[0]?.carbohydrate ?? 0,
+      name: apiFoodItem?.name ?? '',
+      calories: apiFoodItem?.calories ?? 0,
+      protein: apiFoodItem?.protein ?? 0,
+      fat: apiFoodItem?.fat ?? 0,
+      carbs: apiFoodItem?.carbohydrate ?? 0,
       servings: 1,
       date: new Date()
     }
@@ -174,9 +175,7 @@ function LogMeal() {
       </div>
       {data && (
         <div className='card-container'>
-          {data?.foods_search.results &&
-          data?.foods_search.results.food.length > 0
-            ? data.foods_search.results.food.map((apiFoodItem: Food) => (
+          {data ? data.map((apiFoodItem: Food) => (
                 <FoodCard
                   food={apiFoodItem}
                   children={

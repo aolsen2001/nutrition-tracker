@@ -19,13 +19,13 @@ function FoodCard({
     <>
       <div className='meal-card'>
         <div className='meal-card-name'>
-          <p>{food.food_name}</p>
+          <p>{food.name}</p>
         </div>
         <div className='meal-card-info'>
-          <p>Calories: {food.servings.serving[0].calories}</p>
-          <p>Carbs (g): {food.servings.serving[0].carbohydrate}</p>
-          <p>Protein (g): {food.servings.serving[0].protein}</p>
-          <p>Fat (g): {food.servings.serving[0].fat}</p>
+          <p>Calories: {food.calories}</p>
+          <p>Carbs (g): {food.carbohydrate}</p>
+          <p>Protein (g): {food.protein}</p>
+          <p>Fat (g): {food.fat}</p>
         </div>
         {children}
       </div>
